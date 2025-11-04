@@ -7,7 +7,7 @@ import { useAppSelector } from "../redux/hook";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
-const AddTransactionPopUp = ({ chitNoteId }: { chitNoteId: string }) => {
+const AddTransactionPopUp = ({ chit_note_id }: { chit_note_id: string }) => {
     const dispatch = useAppDispatch();
     const { addTransactionPopUp } = useAppSelector((state) => state.popUp);
     const token = localStorage.getItem("token");
@@ -22,7 +22,6 @@ const AddTransactionPopUp = ({ chitNoteId }: { chitNoteId: string }) => {
     const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        // Validate required fields
         if (!formData.Date || !formData.ReceiptNo || !formData.Amount || !formData.TotalAmount || !formData.Total) {
             toast.error("All fields are required");
             return;
@@ -30,14 +29,14 @@ const AddTransactionPopUp = ({ chitNoteId }: { chitNoteId: string }) => {
 
         try {
             const requestData = {
-                Date: formData.Date,
-                ReceiptNo: formData.ReceiptNo,
-                Amount: Number(formData.Amount),
-                TotalAmount: Number(formData.TotalAmount),
-                Total: Number(formData.Total)
+                date: formData.Date,
+                receipt_no: formData.ReceiptNo,
+                amount: Number(formData.Amount),
+                total_amount: Number(formData.TotalAmount),
+                total: Number(formData.Total)
             };
 
-            const response = await fetch(`http://localhost:5000/api/transaction/addTransaction/${chitNoteId}`, {
+            const response = await fetch(`http://localhost:5000/api/transaction/addTransaction/${chit_note_id}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -55,7 +54,6 @@ const AddTransactionPopUp = ({ chitNoteId }: { chitNoteId: string }) => {
             toast.success("Transaction added successfully");
             dispatch(setAddTransactionPopUp(false));
 
-            // Reset form
             setFormData({
                 Date: "",
                 ReceiptNo: "",
@@ -83,16 +81,16 @@ const AddTransactionPopUp = ({ chitNoteId }: { chitNoteId: string }) => {
                             <Input label="Date" type="date" value={formData.Date} onChange={(e) => setFormData({ ...formData, Date: e.target.value })} />
                         </div>
                         <div className='mb-6'>
-                            <Input label="Receipt No" type="text" value={formData.ReceiptNo} onChange={(e) => setFormData({ ...formData, ReceiptNo: e.target.value })} />
+                            <Input label="Receipt No" type="number" value={formData.ReceiptNo} onChange={(e) => setFormData({ ...formData, ReceiptNo: e.target.value })} />
                         </div>
                         <div className='mb-6'>
-                            <Input label="Amount" type="text" value={formData.Amount} onChange={(e) => setFormData({ ...formData, Amount: e.target.value })} />
+                            <Input label="Amount" type="number" value={formData.Amount} onChange={(e) => setFormData({ ...formData, Amount: e.target.value })} />
                         </div>
                         <div className='mb-6'>
-                            <Input label="Total Amount" type="text" value={formData.TotalAmount} onChange={(e) => setFormData({ ...formData, TotalAmount: e.target.value })} />
+                            <Input label="Total Amount" type="number" value={formData.TotalAmount} onChange={(e) => setFormData({ ...formData, TotalAmount: e.target.value })} />
                         </div>
                         <div className='mb-6'>
-                            <Input label="Total" type="text" value={formData.Total} onChange={(e) => setFormData({ ...formData, Total: e.target.value })} />
+                            <Input label="Total" type="number" value={formData.Total} onChange={(e) => setFormData({ ...formData, Total: e.target.value })} />
                         </div>
                         <Button text='Submit' type='submit' onClick={() => { }} />
                     </form>

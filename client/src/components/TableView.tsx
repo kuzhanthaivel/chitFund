@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 
-export default function TableView({ chitNoteId }: { chitNoteId: string }) {
+export default function TableView({ chit_note_id }: { chit_note_id: string }) {
     const [loading] = useState(false);
     const [error] = useState(null);
     const token = localStorage.getItem("token");
@@ -10,7 +10,7 @@ export default function TableView({ chitNoteId }: { chitNoteId: string }) {
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/transaction/viewTransaction/${chitNoteId}`, {
+                const response = await fetch(`http://localhost:5000/api/transaction/viewTransaction/${chit_note_id}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -21,14 +21,21 @@ export default function TableView({ chitNoteId }: { chitNoteId: string }) {
                 if (!response.ok) {
                     throw new Error(result.message || 'Failed to fetch transactions');
                 }
-                setTransactions(result.transactions);
+                setTransactions(result.data);
             } catch (error: any) {
                 console.error('Error fetching transactions:', error);
                 toast.error(error.message || "Failed to fetch transactions");
             }
         };
         fetchTransactions();
-    }, [chitNoteId, token]);
+    }, [chit_note_id, token]);
+    const formatDate = (dateString: string): string => {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    };
     return (
         <main className={`bg-white text-black`}>
             <div className="px-6">
@@ -61,11 +68,11 @@ export default function TableView({ chitNoteId }: { chitNoteId: string }) {
                                         {transactions.map((item: any) => (
                                             <tr key={item.id} className="hover:bg-gray-50">
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.id}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.ReceiptNo}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹{item.Amount.toLocaleString()}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹{item.TotalAmount.toLocaleString()}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">₹{item.Total.toLocaleString()}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.Date}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.receipt_no}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹{item.amount.toLocaleString()}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹{item.total_amount.toLocaleString()}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">₹{item.total.toLocaleString()}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDate(item.date)}</td>
                                             </tr>
                                         ))}
                                     </tbody>

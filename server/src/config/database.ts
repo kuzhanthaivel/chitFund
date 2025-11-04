@@ -2,8 +2,8 @@ import { Sequelize } from 'sequelize';
 
 const dbConfig = {
   database: 'chitfund',
-  username: 'root',
-  password: '',
+  username: 'chit',
+  password: '_Ydx+ke@wMY}',
   host: 'localhost',
   dialect: 'mysql' as const,
   logging: false,

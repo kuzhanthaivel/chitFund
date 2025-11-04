@@ -27,9 +27,9 @@ const AddNotePopUp = () => {
                     "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    NoteName: formData.noteName,
-                    Date: formData.date,
-                    Discribtion: formData.description,
+                    note_name: formData.noteName,
+                    date: formData.date,
+                    description: formData.description,
                 })
             });
             const data = await response.json();

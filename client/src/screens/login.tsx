@@ -27,7 +27,7 @@ const Login = () => {
       const data = await response.json();
       if (response.ok) {
         toast.success("Login successful");
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("token", data.access_token);
         navigate("/");
       } else {
         toast.error("Login failed: " + data.message); 

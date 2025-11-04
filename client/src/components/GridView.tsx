@@ -1,59 +1,20 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
 const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
 };
 
-const dummyEventData = [
-    {
-        id: 1,
-        Date: "15 Mar 2023",
-        NoteName: "Crowdfunding Event",
-        Discribtion: " the event is goodklajhsgkdfjhfj' AIU AIHU IH NSIHUYHB JNXIU  INJCH UH JOUBH ijb N NIBJ JIHB J Hoaoekihiokdplajncm m opiofokplk djojbam so jv jo ",
-    },
-    {
-        id: 2,
-        Date: "20 Feb 2024",
-        NoteName: "Marrage Event",
-        Discribtion: " the event is goodklajhsgkdfjhfj' AIU AIHU IH NSIHUYHB JNXIU  INJCH UH JOUBH ijb N NIBJ JIHB J Hoaoekihiokdplajncm m opiofokplk djojbam so jv jo ",
-    },
-    {
-        id: 3,
-        Date: "10 Jan 2024",
-        NoteName: "Wedding Event",
-        Discribtion: " the event is goodklajhsgkdfjhfj' AIU AIHU IH NSIHUYHB JNXIU  INJCH UH JOUBH ijb N NIBJ JIHB J Hoaoekihiokdplajncm m opiofokplk djojbam so jv jo ",
-    },
-    {
-        id: 4,
-        Date: "05 Dec 2023",
-        NoteName: "Birthday Event",
-        Discribtion: " the event is goodklajhsgkdfjhfj' AIU AIHU IH NSIHUYHB JNXIU  INJCH UH JOUBH ijb N NIBJ JIHB J Hoaoekihiokdplajncm m opiofokplk djojbam so jv jo ",
-    },
-    {
-        id: 5,
-        Date: "30 Mar 2024",
-        NoteName: "Anniversary Event",
-        Discribtion: " the event is goodklajhsgkdfjhfj' AIU AIHU IH NSIHUYHB JNXIU  INJCH UH JOUBH ijb N NIBJ JIHB J Hoaoekihiokdplajncm m opiofokplk djojbam so jv jo ",
-    },
-    {
-        id: 6,
-        Date: "18 Nov 2023",
-        NoteName: "Marriage Event",
-        Discribtion: " the event is goodklajhsgkdfjhfj' AIU AIHU IH NSIHUYHB JNXIU  INJCH UH JOUBH ijb N NIBJ JIHB J Hoaoekihiokdplajncm m opiofokplk djojbam so jv jo ",
-    }
-];
 
 
 export default function GridView() {
     const [loading] = useState(false);
     const [error, setError] = useState<any>(null);
-    const [notes, setNotes] = useState<any>([]);
+    const [notes, setNotes] = useState<any[]>([])
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
     useEffect(() => {
@@ -67,8 +28,8 @@ export default function GridView() {
                     }
                 });
                 const data = await response.json();
-                setNotes(data.notes);
-            } catch (error : any) {
+                setNotes(data.data);
+            } catch (error: any) {
                 setError(error.message || "An error occurred while fetching notes");
             }
         }
@@ -93,12 +54,12 @@ export default function GridView() {
                         ) : (
                             <>
                                 <div className="grid grid-cols-6 gap-4 px-6 w-full mx-auto scale-95">
-                                    {notes.map((item : any) => (
-                                        <div key={item.id} className="w-full border rounded-lg shadow-md p-4 bg-white border-[#E7E6E6] hover:shadow-lg transition-shadow hover:scale-105 cursor-pointer " onClick={()=>{navigate(`/transaction/${item.id}`)}}>
+                                    {notes.map((item: any) => (
+                                        <div key={item.id} className="w-full border rounded-lg shadow-md p-4 bg-white border-[#E7E6E6] hover:shadow-lg transition-shadow hover:scale-105 cursor-pointer " onClick={() => { navigate(`/transaction/${item.id}`) }}>
                                             <div className="flex flex-row items-center justify-center">
                                                 <div className="w-40 h-28 bg-indigo-50 flex items-center justify-center text-center rounded-lg">
                                                     <p className="text-2xl font-semibold">
-                                                        {item.NoteName.charAt(0).toUpperCase()}
+                                                        {item.note_name.charAt(0).toUpperCase()}
                                                     </p>
                                                 </div>
                                             </div>
@@ -107,11 +68,11 @@ export default function GridView() {
                                                 <div className="gap-1">
                                                     <p className="text-gray-600 text-sm">
                                                         <span className="font-semibold text-[#4380EC]">
-                                                            {formatDate(item.Date)}
-                                                        </span> 
+                                                            {formatDate(item.date)}
+                                                        </span>
                                                     </p>
-                                                    <h2 className="text-lg font-bold line-clamp-1">{item.NoteName}</h2>
-                                                    <p className="text-gray-700 text-base line-clamp-2">{item.Discribtion}</p>
+                                                    <h2 className="text-lg font-bold line-clamp-1">{item.note_name}</h2>
+                                                    <p className="text-gray-700 text-base line-clamp-2">{item.description}</p>
                                                 </div>
                                             </div>
                                         </div>

@@ -3,7 +3,6 @@ import { Sequelize, DataTypes, Model, ModelStatic } from 'sequelize';
 export interface IUserModel extends Model {
   id: number;
   username: string;
-  profilePic: string;
   password: string;
   phone: string;
   createdAt: Date;
@@ -43,6 +42,5 @@ export const userModel = (sequelize: Sequelize): UserModelStatic => {
   }) as UserModelStatic;
 };
 
-// Export the model function as default for backward compatibility
 const User = userModel;
 export default User;
