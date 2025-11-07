@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import { User } from '../types/user.type';
 import { toast } from 'react-hot-toast';
+import baseUri from '../utils/baseUri';
 
 export interface AuthState {
     user: User | null;
@@ -19,12 +20,13 @@ export const fetchUserData = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             const token = localStorage.getItem("token");
+            console.log("ammadi athadi inga thanda adi");
             if (!token) {
                 return rejectWithValue('No token found');
             }
 
             const response = await fetch(
-                "http://localhost:5000/api/auth/userData",
+                `${baseUri}/api/auth/userData`,
                 {
                     method: "GET",
                     headers: {
@@ -35,6 +37,7 @@ export const fetchUserData = createAsyncThunk(
             );
 
             if (!response.ok) {
+                console.log("thakkali responce illa");
                 if (response.status === 401 || response.status === 403 || response.status === 404) {
                     localStorage.removeItem("token");
                     toast.error("Unauthorized");
@@ -46,6 +49,8 @@ export const fetchUserData = createAsyncThunk(
             }
 
             const data = await response.json();
+            console.log("ammadi athadi inga thanda adi");
+            console.log("manada soodu ",data);
             return data.user;
         } catch (error: any) {
             toast.error(error.message || 'Failed to fetch user data');

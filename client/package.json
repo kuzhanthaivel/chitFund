@@ -49,6 +49,7 @@
       "last 1 safari version"
     ]
   },
+  "proxy": "http://chit.phonekadai.com/api/chitfundapp ",
   "devDependencies": {
     "@types/react-router-dom": "^5.3.3",
     "tailwindcss": "^3.4.18"

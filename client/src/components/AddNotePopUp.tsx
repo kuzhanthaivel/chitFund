@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 import { useAppSelector } from "../redux/hook";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import baseUri from "../utils/baseUri";
 
 const AddNotePopUp = () => {
     const dispatch = useAppDispatch();
@@ -20,7 +21,7 @@ const AddNotePopUp = () => {
     const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await fetch("http://localhost:5000/api/note/addNote", {
+            const response = await fetch(`${baseUri}/api/note/addNote`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -32,7 +33,10 @@ const AddNotePopUp = () => {
                     description: formData.description,
                 })
             });
-            const data = await response.json();
+            if (!response.ok) {
+                throw new Error("Failed to add note");
+            }
+            // const data = await response.json();
             toast.success("Note added successfully");
             dispatch(setAddNotePopUp(false));
         } catch (error) {

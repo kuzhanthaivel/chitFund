@@ -3,6 +3,7 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
+import baseUri from "../utils/baseUri";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const Login = () => {
     const userName = formElements.userName.value;
     const password = formElements.password.value;
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch(`${baseUri}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -27,6 +28,7 @@ const Login = () => {
       const data = await response.json();
       if (response.ok) {
         toast.success("Login successful");
+        console.log(data);
         localStorage.setItem("token", data.access_token);
         navigate("/");
       } else {

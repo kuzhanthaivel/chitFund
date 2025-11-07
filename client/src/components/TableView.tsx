@@ -1,6 +1,7 @@
 "use client"
 import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
+import baseUri from "../utils/baseUri";
 
 export default function TableView({ chit_note_id }: { chit_note_id: string }) {
     const [loading] = useState(false);
@@ -10,7 +11,7 @@ export default function TableView({ chit_note_id }: { chit_note_id: string }) {
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/transaction/viewTransaction/${chit_note_id}`, {
+                const response = await fetch(`${baseUri}/api/transaction/viewTransaction/${chit_note_id}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,

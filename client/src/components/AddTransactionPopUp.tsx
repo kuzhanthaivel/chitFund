@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 import { useAppSelector } from "../redux/hook";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import baseUri from "../utils/baseUri";
 
 const AddTransactionPopUp = ({ chit_note_id }: { chit_note_id: string }) => {
     const dispatch = useAppDispatch();
@@ -36,7 +37,7 @@ const AddTransactionPopUp = ({ chit_note_id }: { chit_note_id: string }) => {
                 total: Number(formData.Total)
             };
 
-            const response = await fetch(`http://localhost:5000/api/transaction/addTransaction/${chit_note_id}`, {
+            const response = await fetch(`${baseUri}/api/transaction/addTransaction/${chit_note_id}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

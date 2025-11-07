@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import { toast, Toaster } from "react-hot-toast";
+import baseUri from "../utils/baseUri";
+
 const Signup = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
@@ -32,7 +34,7 @@ const Signup = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:5000/api/auth/signup", {
+      const response = await fetch(`${baseUri}/api/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
