@@ -2,10 +2,9 @@ import React, { useEffect } from "react";
 import logo from "../assets/logo.png";
 import { useAppDispatch, useAppSelector } from "../redux/hook";
 import { fetchUserData, logout } from "../redux/authenticationSlice";
-import { setSideBarOpen, setUpdateProfilePopUp } from "../redux/popUpSlice";
+import { setSideBarOpen } from "../redux/popUpSlice";
 import {
   ArrowBigRightDash,
-  CalendarHeart,
   LayoutDashboard,
   LogOut,
 } from "lucide-react";
@@ -63,8 +62,6 @@ const SideMenuBar: React.FC = () => {
   const toggleSidebar = () => {
     dispatch(setSideBarOpen(!sideBarOpen));
   };
-
-  const Profileurl = `http://localhost:5000/uploads/${user?.profilePic || ''}`;
 
   const sidebarBaseClasses =
     "fixed top-0 left-0 z-40 h-screen pt-8 bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700 transition-all duration-300";

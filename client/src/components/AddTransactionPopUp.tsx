@@ -7,11 +7,13 @@ import { useAppSelector } from "../redux/hook";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import baseUri from "../utils/baseUri";
+import { useNavigate } from "react-router-dom";
 
 const AddTransactionPopUp = ({ chit_note_id }: { chit_note_id: string }) => {
     const dispatch = useAppDispatch();
     const { addTransactionPopUp } = useAppSelector((state) => state.popUp);
     const token = localStorage.getItem("token");
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         Date: "",
         ReceiptNo: "",
@@ -20,55 +22,68 @@ const AddTransactionPopUp = ({ chit_note_id }: { chit_note_id: string }) => {
         Total: "",
     })
 
-    const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
 
-        if (!formData.Date || !formData.ReceiptNo || !formData.Amount || !formData.TotalAmount || !formData.Total) {
-            toast.error("All fields are required");
-            return;
-        }
+  if (!formData.Date || !formData.ReceiptNo || !formData.Amount || !formData.TotalAmount || !formData.Total) {
+    toast.error("All fields are required");
+    return;
+  }
 
-        try {
-            const requestData = {
-                date: formData.Date,
-                receipt_no: formData.ReceiptNo,
-                amount: Number(formData.Amount),
-                total_amount: Number(formData.TotalAmount),
-                total: Number(formData.Total)
-            };
+  try {
+    const requestData = {
+      date: formData.Date,
+      receipt_no: formData.ReceiptNo,
+      amount: Number(formData.Amount),
+      total_amount: Number(formData.TotalAmount),
+      total: Number(formData.Total),
+    };
 
-            const response = await fetch(`${baseUri}/api/transaction/addTransaction/${chit_note_id}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData)
-            });
+    const response = await fetch(`${baseUri}/api/transaction/addTransaction/${chit_note_id}`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData),
+    });
 
-            const result = await response.json();
+    const payload = await response.json().catch(() => null);
 
-            if (!response.ok) {
-                throw new Error(result.message || 'Failed to add transaction');
-            }
+    if (!response.ok) {
+      const msg = payload?.message || `Request failed (${response.status})`;
 
-            toast.success("Transaction added successfully");
-            dispatch(setAddTransactionPopUp(false));
-
-            setFormData({
-                Date: "",
-                ReceiptNo: "",
-                Amount: "",
-                TotalAmount: "",
-                Total: "",
-            });
-
-        } catch (error: any) {
-            console.error('Error:', error);
-            toast.error(error.message || "Failed to add transaction");
-        }
+      if (response.status === 400) {
+        toast.error(msg);
+      } else if (response.status === 401) {
+        toast.error("Session expired. Please log in.");
+        localStorage.removeItem("token");
+        navigate("/login");
+      } else if (response.status === 404) {
+        toast.error("Chit note not found or access denied");
+      } else if (response.status >= 500) {
+        toast.error("Server error. Please try again later.");
+      } else {
+        toast.error(msg);
+      }
+      return;
     }
 
+    toast.success(payload?.message ?? "Transaction added successfully");
+    dispatch(setAddTransactionPopUp(false));
+
+    setFormData({
+      Date: "",
+      ReceiptNo: "",
+      Amount: "",
+      TotalAmount: "",
+      Total: "",
+    });
+  } catch (error: any) {
+    console.error("Error:", error);
+    toast.error(error.message || "Failed to add transaction");
+  }
+};
     return (
         <div>
             {addTransactionPopUp && (<div className='fixed inset-0  bg-opacity-20 z-30 backdrop-blur-sm min-h-screen flex items-center justify-center bg-gray-100'>

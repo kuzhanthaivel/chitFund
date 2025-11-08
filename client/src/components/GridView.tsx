@@ -2,6 +2,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import baseUri from "../utils/baseUri";
+import { useAppSelector } from "../redux/hook";
+import { toast } from "react-hot-toast";
+
 const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');
@@ -22,48 +25,64 @@ export default function GridView() {
     const [notes, setNotes] = useState<Note[]>([]);
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
+    const { addNotePopUp } = useAppSelector((state) => state.popUp);
 
     useEffect(() => {
-        const fetchNoteData = async () => {
-            try {
-                console.log('Fetching notes with token:', token);
-                const response = await fetch(`${baseUri}/api/note/viewNote`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    }
-                });
-                
-                console.log(" ivanthan thanda problem:", response.status);
-                const data = await response.json().catch(e => {
-                    console.error('Error parsing JSON:', e);
-                    throw new Error('Invalid response from server');
-                });
-                
-                if (!response.ok) {
-                    console.error(" ivanthan thanda problem:", data);
-                    throw new Error(data.message || `Failed to fetch notes: ${response.status} ${response.statusText}`);
+
+            const fetchNoteData = async () => {
+        try {
+            const response = await fetch(`${baseUri}/api/note/viewNote`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+
+            const payload = await response.json().catch(() => null);
+
+            if (!response.ok) {
+                const msg = payload?.message || `Request failed (${response.status})`;
+
+                if (response.status === 400) {
+                    setError(msg);
+                } else if (response.status === 401) {
+                    setError("Session expired. Please log in.");
+                    localStorage.removeItem("token");
+                    toast.error("Session expired. Please log in.");
+                    navigate("/login");
+                } else if (response.status === 404) {
+                    setError("No notes found.");
+                    toast.error("No notes found.");
+                    setNotes([]);
+                } else if (response.status >= 500) {
+                    setError("Server error. Please try again later.");
+                    toast.error("Server error. Please try again later.");
+                } else {
+                    setError(msg);
                 }
-                
-                console.log('Notes data:', data);
-                setNotes(data.data || []);
-            } catch (error: any) {
-                console.error('Error fetching notes:', error);
-                setError(error.message || "An error occurred while fetching notes");
-                console.log(error);
-            } finally {
-                setLoading(false);
+                return;
             }
-        };
-        
+            setNotes(Array.isArray(payload?.data) ? payload.data : []);
+        } catch (error: any) {
+            console.error("Error fetching notes:", error);
+            setError(error.message || "An error occurred while fetching notes");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+        if (addNotePopUp) {
+            fetchNoteData();
+        }
         if (token) {
             fetchNoteData();
         } else {
             setError("Authentication required. Please log in.");
+            toast.error("Authentication required. Please log in.");
             setLoading(false);
         }
-    }, [token]);
+    }, [token, addNotePopUp,navigate]);
 
     if (loading) {
         return (
@@ -79,7 +98,7 @@ export default function GridView() {
             <div className="flex flex-col justify-center items-center min-h-[50vh] text-red-500 p-4 text-center">
                 <p className="text-lg font-medium">Error loading notes</p>
                 <p className="text-sm text-gray-600 mt-2">{error}</p>
-                <button 
+                <button
                     onClick={() => window.location.reload()}
                     className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
                 >
@@ -99,8 +118,8 @@ export default function GridView() {
                 ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
                         {notes.map((item) => (
-                            <div 
-                                key={item.id} 
+                            <div
+                                key={item.id}
                                 className="group border rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden bg-white border-gray-200 cursor-pointer transform hover:-translate-y-1"
                                 onClick={() => navigate(`/transaction/${item.id}`)}
                             >
@@ -110,7 +129,7 @@ export default function GridView() {
                                             {item.note_name.charAt(0).toUpperCase()}
                                         </div>
                                     </div>
-                                    
+
                                     <div className="text-center">
                                         <p className="text-sm text-gray-500 mb-1">
                                             {formatDate(item.date)}
@@ -125,7 +144,7 @@ export default function GridView() {
                                         )}
                                     </div>
                                 </div>
-                                
+
                                 <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 text-center">
                                     <span className="text-sm font-medium text-blue-600 group-hover:text-blue-700 transition-colors">
                                         View Details →

@@ -2,34 +2,75 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import baseUri from "../utils/baseUri";
-
+import { useAppSelector } from "../redux/hook";
+import { useNavigate } from "react-router-dom";
 export default function TableView({ chit_note_id }: { chit_note_id: string }) {
-    const [loading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error] = useState(null);
+    const { addTransactionPopUp } = useAppSelector((state) => state.popUp);
     const token = localStorage.getItem("token");
     const [transactions, setTransactions] = useState([]);
+    const navigate = useNavigate();
+
     useEffect(() => {
-        const fetchTransactions = async () => {
-            try {
-                const response = await fetch(`${baseUri}/api/transaction/viewTransaction/${chit_note_id}`, {
-                    method: 'GET',
+            const fetchTransactions = async () => {
+        try {
+            const response = await fetch(
+                `${baseUri}/api/transaction/viewTransaction/${chit_note_id}`,
+                {
+                    method: "GET",
                     headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json",
                     },
-                });
-                const result = await response.json();
-                if (!response.ok) {
-                    throw new Error(result.message || 'Failed to fetch transactions');
                 }
-                setTransactions(result.data);
-            } catch (error: any) {
-                console.error('Error fetching transactions:', error);
-                toast.error(error.message || "Failed to fetch transactions");
+            );
+
+            const payload = await response.json().catch(() => null);
+
+            if (!response.ok) {
+                const msg = payload?.message || `Request failed (${response.status})`;
+
+                if (response.status === 400) {
+                    toast.error(msg);
+                    setLoading(false);
+                } else if (response.status === 401) {
+                    toast.error("Session expired. Please log in.");
+                    localStorage.removeItem("token");
+                    navigate("/login");
+                } else if (response.status === 404) {
+                    toast.error("Chit note not found or access denied");
+                    setTransactions([]);
+                    setLoading(false);
+                } else if (response.status >= 500) {
+                    toast.error("Server error. Please try again later.");
+                    setLoading(false);
+                } else {
+                    toast.error(msg);
+                    setLoading(false);
+                }
+                return;
             }
-        };
-        fetchTransactions();
-    }, [chit_note_id, token]);
+
+            setTransactions(Array.isArray(payload?.data) ? payload.data : []);
+        } catch (error: any) {
+            console.error("Error fetching transactions:", error);
+            toast.error(error.message || "Failed to fetch transactions");
+            setLoading(false);
+        } finally {
+            setLoading(false);
+        }
+    };
+        if (addTransactionPopUp) {
+            fetchTransactions();
+        }
+        if (token) {
+            fetchTransactions();
+        } else {
+            toast.error("Authentication required. Please log in.");
+            setLoading(false);
+        }
+    }, [token, addTransactionPopUp, navigate, chit_note_id]);
     const formatDate = (dateString: string): string => {
         const date = new Date(dateString);
         const day = String(date.getDate()).padStart(2, '0');

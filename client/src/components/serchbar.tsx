@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import Logo from '../assets/logo.png'
 import { Search } from 'lucide-react'
 

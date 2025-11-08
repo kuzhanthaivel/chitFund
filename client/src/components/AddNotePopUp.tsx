@@ -33,11 +33,19 @@ const AddNotePopUp = () => {
                     description: formData.description,
                 })
             });
+            const payload = await response.json();
             if (!response.ok) {
-                throw new Error("Failed to add note");
+                const msg = payload?.message || `Request failed (${response.status})`;
+                if (response.status === 400) {
+                    toast.error(msg);
+                } else if (response.status === 401) {
+                    toast.error("Session expired. Please log in.");
+                } else {
+                    toast.error(msg);
+                }
+                return;
             }
-            // const data = await response.json();
-            toast.success("Note added successfully");
+            toast.success(payload?.message ?? "Note added successfully");
             dispatch(setAddNotePopUp(false));
         } catch (error) {
             toast.error("Failed to add note");
