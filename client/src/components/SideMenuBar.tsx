@@ -74,16 +74,16 @@ const SideMenuBar: React.FC = () => {
     <div className="bg-gray-500 relative">
       <aside
         className={`${sidebarBaseClasses} ${sideBarOpen
-            ? "w-64 translate-x-0"
-            : "w-20 -translate-x-full sm:translate-x-0"
+          ? "w-64 translate-x-0"
+          : "w-20 -translate-x-full sm:translate-x-0"
           }`}
         aria-label="Sidebar"
       >
         <div className="p-2 ">
           <div
             className={`flex items-center  ${sideBarOpen
-                ? "justify-between"
-                : "group relative justify-center"
+              ? "justify-between"
+              : "group relative justify-center"
               }`}
           >
             <div className="flex items-center me-2">
@@ -100,8 +100,8 @@ const SideMenuBar: React.FC = () => {
             </div>
             <div
               className={`${iconButtonClasses} ${sideBarOpen
-                  ? ""
-                  : "hidden group-hover:block absolute top-0 left-4 "
+                ? ""
+                : "hidden group-hover:block absolute top-0 left-4 "
                 } `}
               onClick={toggleSidebar}
             >
@@ -118,7 +118,7 @@ const SideMenuBar: React.FC = () => {
           <ul className="space-y-2 font-medium">
             {menuItems.map((item, index) => (
               <li key={index}>
-                <a href={item.href} className={menuItemClasses}>
+                <span onClick={() => navigate(item.href)} className={menuItemClasses + " cursor-pointer"}>
                   <div className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
                     {item.icon}
                   </div>
@@ -127,7 +127,7 @@ const SideMenuBar: React.FC = () => {
                       {item.label}
                     </span>
                   )}
-                </a>
+                </span>
               </li>
             ))}
             <li>

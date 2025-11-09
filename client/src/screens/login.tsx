@@ -32,7 +32,7 @@ const Login = () => {
         localStorage.setItem("token", data.access_token);
         navigate("/");
       } else {
-        toast.error("Login failed: " + data.message); 
+        toast.error("Login failed: " + data.message);
       }
     } catch (error) {
       toast.error("Error during login: " + error);
@@ -61,17 +61,17 @@ const Login = () => {
             required
           />
           <div className="flex items-center justify-between">
-            <Button text="Login" type="submit" onClick={() => {}} />
+            <Button text="Login" type="submit" onClick={() => { }} />
           </div>
         </form>
         <div className="mt-4">
           <p className=" text-gray-800 text-center">
-            {" "}
+
             Don't have an account ?{" "}
-            <a className="text-blue-600 no-underline " href="/signup">
-              {" "}
+            <span className="text-blue-600 no-underline cursor-pointer" onClick={() => navigate("/signup")}>
+
               Sign Up
-            </a>{" "}
+            </span>
           </p>
         </div>
       </div>

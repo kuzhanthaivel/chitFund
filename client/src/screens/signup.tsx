@@ -39,7 +39,7 @@ const Signup = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username: userName, password, phone: phoneNo }) ,
+        body: JSON.stringify({ username: userName, password, phone: phoneNo }),
       });
       const data = await response.json();
       if (response.ok) {
@@ -101,14 +101,14 @@ const Signup = () => {
           <p className=" text-gray-800 text-center">
             {" "}
             Already have account ?{" "}
-            <a className="text-blue-600 no-underline " href="/login">
+            <span className="text-blue-600 no-underline cursor-pointer" onClick={() => navigate("/login")}>
               {" "}
               Log In
-            </a>{" "}
+            </span>{" "}
           </p>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 export default Signup;
