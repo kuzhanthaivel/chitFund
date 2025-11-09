@@ -31,7 +31,7 @@ def create_app():
     JWTManager(app)    
     CORS(app, 
          resources={
-             r"/*": {"origins": ["https://chit.phonekadai.com", "http://localhost:3000", "http://192.168.56.1:3000"]}
+             r"/*": {"origins": ["https://chit.phonekadai.com", "http://localhost:3000", "http://192.168.1.8:3000"]}
          },
          supports_credentials=True,
          allow_headers=["Content-Type", "Authorization"],
