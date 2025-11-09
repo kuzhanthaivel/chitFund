@@ -12,7 +12,7 @@ def create_app():
     app = Flask(__name__)
 
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-here')
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/chitfund'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://<db_user>:<db_password>@<db_host>/<db_name>'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'jwt-secret-key')
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
@@ -29,14 +29,7 @@ def create_app():
     
     Migrate(app, db)  
     JWTManager(app)    
-    CORS(app, 
-         resources={
-             r"/*": {"origins": ["https://chit.phonekadai.com", "http://localhost:3000", "http://192.168.1.8:3000"]}
-         },
-         supports_credentials=True,
-         allow_headers=["Content-Type", "Authorization"],
-         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    )
+    CORS(app)
 
     from routes.auth_routes import auth_bp
     from routes.note_routes import note_bp
